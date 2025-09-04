@@ -1,0 +1,99 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6fa;
+    margin: 0;
+}
+
+header {
+    background: #2d3e50;
+    color: #fff;
+    padding: 1em 2em;
+}
+
+main {
+    max-width: 800px;
+    margin: 2em auto;
+    background: #fff;
+    padding: 2em;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px #0001;
+}
+
+h1, h2 {
+    margin-top: 0;
+}
+
+form {
+    margin-bottom: 2em;
+}
+
+label {
+    display: block;
+    margin: 0.5em 0 0.2em;
+}
+
+input, textarea, select {
+    width: 100%;
+    padding: 0.5em;
+    margin-bottom: 1em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    background: #2d3e50;
+    color: #fff;
+    border: none;
+    padding: 0.7em 1.5em;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1a2533;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1em;
+}
+
+th, td {
+    padding: 0.7em;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+}
+
+th {
+    background: #f0f2f7;
+}
+
+.status-open {
+    color: #388e3c;
+    font-weight: bold;
+}
+
+.status-closed {
+    color: #d32f2f;
+    font-weight: bold;
+}
+
+.actions button {
+    margin-right: 0.5em;
+}
+
+@media (max-width: 600px) {
+    main {
+        padding: 1em;
+    }
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+    th, td {
+        padding: 0.5em 0;
+    }
+    th {
+        background: none;
+    }
+}
