@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Help Desk Ticket System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6fa; margin: 0; }
+        header { background: #2d3e50; color: #fff; padding: 1em 2em; }
+        main { max-width: 800px; margin: 2em auto; background: #fff; padding: 2em; border-radius: 8px; box-shadow: 0 2px 8px #0001; }
+        h1, h2 { margin-top: 0; }
+        form { margin-bottom: 2em; }
+        label { display: block; margin: 0.5em 0 0.2em; }
+        input, textarea, select { width: 100%; padding: 0.5em; margin-bottom: 1em; border: 1px solid #ccc; border-radius: 4px; }
+        button { background: #2d3e50; color: #fff; border: none; padding: 0.7em 1.5em; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #1a2533; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1em; }
+        th, td { padding: 0.7em; border-bottom: 1px solid #eee; text-align: left; }
+        th { background: #f0f2f7; }
+        .status-open { color: #388e3c; font-weight: bold; }
+        .status-closed { color: #d32f2f; font-weight: bold; }
+        .actions button { margin-right: 0.5em; }
+        @media (max-width: 600px) {
+            main { padding: 1em; }
+            table, thead, tbody, th, td, tr { display: block; }
+            th, td { padding: 0.5em 0; }
+            th { background: none; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Help Desk Ticket System</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Submit a Ticket</h2>
+            <form id="ticketForm">
+                <label for="name">Your Name</label>
+                <input type="text" id="name" required>
+                <label for="email">Your Email</label>
+                <input type="email" id="email" required>
+                <label for="subject">Subject</label>
+                <input type="text" id="subject" required>
+                <label for="description">Description</label>
+                <textarea id="description" rows="4" required></textarea>
+                <label for="priority">Priority</label>
+                <select id="priority" required>
+                    <option value="Low">Low</option>
+                    <option value="Normal" selected>Normal</option>
+                    <option value="High">High</option>
+                </select>
+                <button type="submit">Submit Ticket</button>
+            </form>
+        </section>
+        <section>
+            <h2>Tickets</h2>
+            <table id="ticketsTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Subject</th>
+                        <th>Status</th>
+                        <th>Priority</th>
+                        <th>Submitted By</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Tickets will be inserted here -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+    <script>
+        // Ticket storage in localStorage
+        function getTickets() {
+            return JSON.parse(localStorage.getItem('tickets') || '[]');
+        }
+        function saveTickets(tickets) {
+            localStorage.setItem('tickets', JSON.stringify(tickets));
+        }
+        function renderTickets() {
+            const tickets = getTickets();
+            const tbody = document.querySelector('#ticketsTable tbody');
+            tbody.innerHTML = '';
+            tickets.forEach(ticket => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${ticket.id}</td>
+                    <td>${ticket.subject}</td>
+                    <td class="status-${ticket.status.toLowerCase()}">${ticket.status}</td>
+                    <td>${ticket.priority}</td>
+                    <td>${ticket.name}</td>
+                    <td>${ticket.date}</td>
+                    <td class="actions">
+                        ${ticket.status === 'Open' ? `<button onclick="closeTicket(${ticket.id})">Close</button>` : ''}
+                        <button onclick="viewTicket(${ticket.id})">View</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        function closeTicket(id) {
+            const tickets = getTickets();
+            const idx = tickets.findIndex(t => t.id === id);
+            if (idx !== -1) {
+                tickets[idx].status = 'Closed';
+                saveTickets(tickets);
+                renderTickets();
+            }
+        }
+        function viewTicket(id) {
+            const tickets = getTickets();
+            const ticket = tickets.find(t => t.id === id);
+            if (ticket) {
+                alert(
+                    `Ticket #${ticket.id}\n` +
+                    `Subject: ${ticket.subject}\n` +
+                    `Status: ${ticket.status}\n` +
+                    `Priority: ${ticket.priority}\n` +
+                    `Submitted By: ${ticket.name} (${ticket.email})\n` +
+                    `Date: ${ticket.date}\n\n` +
+                    `Description:\n${ticket.description}`
+                );
+            }
+        }
+        document.getElementById('ticketForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const tickets = getTickets();
+            const id = tickets.length ? tickets[tickets.length - 1].id + 1 : 1;
+            const ticket = {
+                id,
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                subject: document.getElementById('subject').value,
+                description: document.getElementById('description').value,
+                priority: document.getElementById('priority').value,
+                status: 'Open',
+                date: new Date().toLocaleString()
+            };
+            tickets.push(ticket);
+            saveTickets(tickets);
+            renderTickets();
+            this.reset();
+        });
+        // Expose functions for inline onclick
+        window.closeTicket = closeTicket;
+        window.viewTicket = viewTicket;
+        // Initial render
+        renderTickets();
+    </script>
+</body>
+</html>
